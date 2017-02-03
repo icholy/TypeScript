@@ -197,6 +197,7 @@ namespace ts {
         let globalNumberType: ObjectType;
         let globalBoxedNumberType: ObjectType;
         let globalStrictBoxedNumberType: ObjectType;
+        let globalStrictBoxedStringType: ObjectType;
         let globalBooleanType: ObjectType;
         let globalRegExpType: ObjectType;
         let anyArrayType: Type;
@@ -15092,7 +15093,10 @@ namespace ts {
                         resultType = numberType;
                     }
                     else {
-                        if (isTypeOfKind(leftType, TypeFlags.StringLike) || isTypeOfKind(rightType, TypeFlags.StringLike)) {
+                        if (
+                          (isTypeOfKind(leftType, TypeFlags.StringLike) || isTypeAssignableTo(leftType, globalStrictBoxedStringType)) || 
+                          (isTypeOfKind(rightType, TypeFlags.StringLike) || isTypeAssignableTo(rightType, globalStrictBoxedStringType))
+                        ) {
                             // If one or both operands are of the String primitive type, the result is of the String primitive type.
                             resultType = stringType;
                         }
@@ -20975,6 +20979,7 @@ namespace ts {
             globalRegExpType = getGlobalType("RegExp");
             globalBoxedNumberType = getGlobalType("BoxedNumber");
             globalStrictBoxedNumberType = getGlobalType("StrictBoxedNumber");
+            globalStrictBoxedStringType = getGlobalType("StrictBoxedString");
 
             jsxElementType = getExportedTypeFromNamespace("JSX", JsxNames.Element);
             getGlobalClassDecoratorType = memoize(() => getGlobalType("ClassDecorator"));
