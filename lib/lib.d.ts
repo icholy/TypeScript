@@ -1329,6 +1329,10 @@ type BoxedNumber = {
   valueOf(): number;
 }
 
+type StrictBoxedNumber = {
+  valueOf(): number;
+  [Symbol.toPrimitive]?(hint: "default"): number;
+}
 
 declare type ClassDecorator = <TFunction extends Function>(target: TFunction) => TFunction | void;
 declare type PropertyDecorator = (target: Object, propertyKey: string | symbol) => void;

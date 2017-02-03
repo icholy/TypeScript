@@ -196,6 +196,7 @@ namespace ts {
         let globalStringType: ObjectType;
         let globalNumberType: ObjectType;
         let globalBoxedNumberType: ObjectType;
+        let globalStrictBoxedNumberType: ObjectType;
         let globalBooleanType: ObjectType;
         let globalRegExpType: ObjectType;
         let anyArrayType: Type;
@@ -15082,7 +15083,10 @@ namespace ts {
                     }
 
                     let resultType: Type;
-                    if (isTypeOfKind(leftType, TypeFlags.NumberLike) && isTypeOfKind(rightType, TypeFlags.NumberLike)) {
+                    if (
+                        (isTypeOfKind(leftType, TypeFlags.NumberLike) || isTypeAssignableTo(leftType, globalStrictBoxedNumberType)) &&
+                        (isTypeOfKind(rightType, TypeFlags.NumberLike) || isTypeAssignableTo(rightType, globalStrictBoxedNumberType))
+                    ) {
                         // Operands of an enum type are treated as having the primitive type Number.
                         // If both operands are of the Number primitive type, the result is of the Number primitive type.
                         resultType = numberType;
@@ -20970,6 +20974,7 @@ namespace ts {
             globalBooleanType = getGlobalType("Boolean");
             globalRegExpType = getGlobalType("RegExp");
             globalBoxedNumberType = getGlobalType("BoxedNumber");
+            globalStrictBoxedNumberType = getGlobalType("StrictBoxedNumber");
 
             jsxElementType = getExportedTypeFromNamespace("JSX", JsxNames.Element);
             getGlobalClassDecoratorType = memoize(() => getGlobalType("ClassDecorator"));
