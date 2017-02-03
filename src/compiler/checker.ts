@@ -195,6 +195,7 @@ namespace ts {
         let globalReadonlyArrayType: GenericType;
         let globalStringType: ObjectType;
         let globalNumberType: ObjectType;
+        let globalBoxedNumberType: ObjectType;
         let globalBooleanType: ObjectType;
         let globalRegExpType: ObjectType;
         let anyArrayType: Type;
@@ -14527,7 +14528,8 @@ namespace ts {
         }
 
         function checkArithmeticOperandType(operand: Node, type: Type, diagnostic: DiagnosticMessage): boolean {
-            if (!isTypeAnyOrAllConstituentTypesHaveKind(type, TypeFlags.NumberLike)) {
+            if (!isTypeAnyOrAllConstituentTypesHaveKind(type, TypeFlags.NumberLike) &&
+                !checkTypeAssignableTo(type, globalBoxedNumberType, operand, /*headMessage*/ undefined)) {
                 error(operand, diagnostic);
                 return false;
             }
@@ -20967,6 +20969,7 @@ namespace ts {
             globalNumberType = getGlobalType("Number");
             globalBooleanType = getGlobalType("Boolean");
             globalRegExpType = getGlobalType("RegExp");
+            globalBoxedNumberType = getGlobalType("BoxedNumber");
 
             jsxElementType = getExportedTypeFromNamespace("JSX", JsxNames.Element);
             getGlobalClassDecoratorType = memoize(() => getGlobalType("ClassDecorator"));
